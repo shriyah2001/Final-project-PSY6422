@@ -1,0 +1,218 @@
+---
+title: Final project - PSY6422
+output:
+html_document:
+  pdf_document:
+  date: "2024-03-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## **THEMES OF THE TOP 1000 ANIME IN 2023**
+### **Rationale**:
+Japanese animation, also known as **Anime**, has gained immense popularity over the years. As I grew up watching anime, the topic of which Genre or Theme was more interesting always sparked a debate between me and my friends. And thus, for my final project for PSY6422, I will try to visualise common recurring themes in the top 500 highly rated anime of the year 2023 on My Anime List. 
+
+Action, adventure, comedy, drama, romance, fantasy, sci-fi, and many more genres are covered in anime. Anime fans' varied tastes and passions are catered to by the distinctive storytelling aspects found in each genre. Better recommendation systems can be created by having a better understanding of which genres perform better. The reason why I choose themes over genre is because one anime could have multiple themes thus making our criteria more inclusive and relatively comprehensive.
+
+I am using Plotly to create an interactive version of my plot as the graph as multiple columns which can be hard to follow & the reader might benefit from the interactive nature of the graph by simply hovering over the column to see its description i.e, The name of the theme and the count.
+
+#### **Questions I aim to visualise:**
++ In the top 1000 highly rated anime of 2023 which themes were common?
++ The highly rated to 1000 anime of 2023 were derived from which source?
+
+```{r echo=FALSE}
+# Define the path to the image
+image_path <- here::here("images/p1.png")
+
+# Display the image
+knitr::include_graphics(image_path)
+```
+
+*A still from [Tenki no ko](https://myanimelist.net/anime/38826/Tenki_no_Ko) by Makato Shinkai*
+
+### **Source of the Dataset :**
+
+The dataset was acquired from Md Kazi Sajiduddin on [kaggle](https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset).
+It was created around July 2023. Jikan Application Programming Interface (4.0.0) was used to extract the anime dataset via the My Anime list. The original dataset retrived  anime-related data, inclduing the original title, the english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. [MyAnimeList](https://myanimelist.net/). 
+
+### **What is My Anime List?**
+Frequently shortened as MAL, MyAnimeList is a volunteer-run website that provides social networking and social cataloging services for fans of anime and manga. Users of the website can score and arrange anime and manga using a system similar to a list. It offers a comprehensive database on anime and manga and makes it easier to find users with similar interests.
+
+### **What will my project include?**
+The data included 24,985 anime titles that were rated by users on My Anime List. The original dataset had a plethora of information including The original title, english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. 
+For my project, I will examine the top 1000 anime titles in the dataset to identify recurring themes. Additionally, I will also visualise if the *Source* of the anime, taking a look at if the anime was derived from a Manga *(Comic book)*, Web novel, Light novel or was an original creation and so on. Thus, I make sure only these columns are retrived from the rawdata.
+
+### **Folders in my project:**
+The /Data consists of the raw data acquired from kaggle, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
+
+```{r, include=FALSE}
+
+# Loading the libraries required 
+if (!require("renv")) install.packages("renv") # used renv to update the packages as and when needed
+if (!require("here")) install.packages("here") # used to create a relative path for the data
+if (!require("readr")) install.packages("readr") # used to read data from csv file
+if (!require("tidyverse")) install.packages("tidyverse") # used for visualising
+if (!require("dplyr")) install.packages("dplyr") # used to clean data
+if (!require("ggthemes")) install.packages("ggthemes") # Used to import additional themes
+if (!require("kableExtra")) install.packages("kableExtra") # used for creating tables in the document 
+if (!require("plotly")) install.packages("plotly")  #  used to create interactive plots
+
+library(renv) # using renv to manage libraries used for the project
+renv::restore()
+library(here)
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(kableExtra)
+library(plotly)
+
+```
+```{r, include=FALSE}
+
+# Selecting specific variables
+cols <- c('source','themes')
+# Specify the file path of your dataset
+file_path <- here::here("Data/anime.csv")
+
+# Load only the first 500 rows of the specified columns
+data <- read_csv(file_path, col_select = cols,n_max = 1000)
+
+# Renaming the columns
+data <- rename(data,
+            Source= source,
+            Themes= themes,
+            )
+```
+
+#### **Data Wrangling:**
+```{r echo=TRUE}
+# Cleaning the data by removing the special characters from the dataset with the lapply function
+# Different codes because I keep messing up when I type them together!
+# First, to remove the Brackets
+data <- data.frame(lapply(data, function(x) gsub("^\\[|\\]$", "", x)))
+
+# Second, to remove quotation marks
+data <- data.frame(lapply(data, function(x) gsub("'", "", x)))
+
+# Cleaning the names of the sources in the data
+data$Source <- gsub("manga", "Manga", data$Source)
+data$Source <- gsub("original", "Original", data$Source)
+data$Source <- gsub("visual_novel", "Visual Novel", data$Source, ignore.case = TRUE)
+data$Source <- gsub("web_Manga", "Web Manga", data$Source, ignore.case = TRUE)
+data$Source <- gsub("light_novel", "Light Novel", data$Source, ignore.case = TRUE)
+data$Source <- gsub("game", "Game", data$Source)
+data$Source <- gsub("4_koma_manga", "Yonkoma", data$Source, ignore.case = TRUE)
+data$Source <- gsub("novel", "Novel", data$Source)
+data$Source <- gsub("web_Novel", "Web Novel", data$Source, ignore.case = TRUE)
+data$Source <- gsub("other", "Other", data$Source, ignore.case = TRUE)
+data$Source <- gsub("music", "Music", data$Source, ignore.case = TRUE)
+data$Source <- gsub("card_Game", "Card Game", data$Source, ignore.case = TRUE)
+
+```
+
+
+```{r echo=TRUE}
+# Making a dataset called df that divides Themes converted into a longer format
+# Separating them into a longer form after spliting them after a comma
+df <- separate_rows(data, Themes, sep = ",\\s*")
+theme_counts <- df %>%   # I further assigned it to theme_counts to get a count check of the themes in the df dataset
+    count(Themes) %>%
+    filter(Themes != "") %>%  #To filter out rows with empty values
+    arrange(desc(n)) %>%  # Arranging the count into descending order
+    rename(Count = n) # Renaming the count as
+```
+
+### **A table of the total theme count from top rated 1000 anime titles on My Anime List**:
+```{r echo=TRUE}
+kable(theme_counts, format = "markdown")
+```
+
+### **An interactive plot of the Theme count**
+
+```{r echo=TRUE, warning=FALSE}
+# Assigning the rainbow theme to each unique theme in theme_count
+theme_colors <- rainbow(length(unique(theme_counts$Themes)))
+
+# Creating the first graph with ggplot
+fig1 <- ggplot(theme_counts, aes(x = Themes, y = Count)) +
+    geom_bar(stat = 'identity', fill = theme_colors) +
+    labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 HIGHEST RATED ANIME IN 2023") +
+    theme_minimal() +
+    theme(
+        plot.background = element_rect(fill = 'black'),  # To create a black background
+        panel.background = element_rect(fill = 'black'), # To create a black panel background
+        panel.grid.major = element_line(color = 'transparent'),  # To make major gridlines transparent
+        axis.line = element_line(color = '#FFFFFF'),  # axis lines colour set as White
+        axis.text = element_text(color = '#EEB4B4'),  # axis text colour set as rosybrown2
+        axis.title = element_text(color = 'skyblue'), # axis title colour set as skynlue
+        plot.title = element_text(color = 'skyblue', size = 14),  # Plot title colour set to blue & size was adjusted 
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 7)  # x-axis text angle was adjusted to make it more readable
+    ) +
+    guides(fill = FALSE)  # Removing the legend as the name of the column and count is avaible in the interactive version
+
+#assigning the plot to plotly fr an interactive graph
+fig1 <- ggplotly(fig1)
+fig1
+
+# Saving the figure in the figures folder
+ggsave(here('Figures', 'Themes_graph.png'), width = 15, height = 10, units = "cm", dpi = 500)
+```
+```{r echo=FALSE}
+# Assigning the count of source of the anime to source_count
+source_counts <- data %>%
+    count(Source) %>%
+    filter(Source != "") %>%  #To filter out rows with empty values
+    arrange(desc(n)) %>% # Arranging the count in descending order
+    rename(Count = n) # Renaming n as count
+```
+### **A table of the total theme count from top rated 1000 anime titles on My Anime List:**
+```{r echo=FALSE}
+# To show a table of source count
+kable(source_counts, format = "markdown")
+```
+
+### **Second Graph that plots the source of the top 1000 highest rated anime of 2023**
+```{r echo=TRUE}
+# Creating the second bar graph in ggplot
+source_colors <- rainbow(length(unique(source_counts$Source))) # Setting up rainbow themes for the graph by assigning a colour to each unique value
+fig2 <- ggplot(source_counts, aes(x =Source, y = Count)) +
+    scale_y_continuous(breaks = seq(0, max(source_counts$Count), by = 100)) + # To make the intervals on Y axis 100
+    geom_bar(stat = 'identity', fill = source_colors)+
+    labs(x = 'Source', y = 'Count', title = "Source of the top 1000 highest rated anime of 2023") +
+    theme_minimal() +
+    theme(
+        plot.background = element_rect(fill = 'black'),  # To create black background
+        panel.background = element_rect(fill = 'black'), # To create a black panel background
+        panel.grid.major = element_line(color = 'transparent'),  # To make major gridlines transparent
+        axis.line = element_line(color = '#FFFFFF'),  # axis lines colour set as White
+        axis.text = element_text(color = '#EEB4B4'),  # axis text colour set as rosybrown2
+        axis.title = element_text(color = 'skyblue'), # axis title colour set as skyblue
+        plot.title = element_text(color = 'skyblue', size = 14),  # Plot title colour set to blue & size was adjusted
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 7)  # x-axis text angle was adjusted to make it more readable
+    ) +
+    scale_fill_manual(values = source_colors) +  # setting the colours in the plot
+    guides(fill = FALSE) # removing the legend because the plot is interactive and the names and count can be seen when clicked on
+
+#assigning the plot to plotly for an interactive graph
+fig2 <- ggplotly(fig2)
+fig2
+# Saving the figure in the figures folder
+ggsave(here('Figures', 'Source_graph.png'), width = 15, height = 10, units = "cm", dpi = 500)
+```
+
+#### **Insights:**
+It is evident that the *School* theme is among the most highly regarded animes of 2023, making it one of the most popular recurring themes.Some of the top-rated themes in the 2023 anime ratings were Adult Cast, Historical, Psychological, Super Power, Mythology, Military, and Isekai. 
+In the second graph we observe that a considerable amount of anime that were highly rated in 2023 were derived from Manga, followed by Light novels and original plots.
+
+#### **Closing remarks:**
+I was able to pick up a new skill at my own pace with this module. I can say have relatively become capable of using R Studio and Github over time. I also used this chance to investigate various packages and themes that might improve my project in some way. I also explored managing project environments with *renv* to ensure the required packages are installed appropraitely over different devices. 
+If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series hghly rated. I also had attempted to scrap the dataset for the cuurent year via My Anime List but was unsuccessful in doing so, therefore working on my web scraping skills would also be one of my future goals.
+
+#### **References :**
++ Anime Dataset 2023. (2023, July 28). Kaggle. https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset 
++ Grolemund, G., & Wickham, H. (2014). R for Data science. https://edtechbooks.org/r_data_science 
++ MyAnimeList.net: *anime and manga database and community.* (n.d.). MyAnimeList.net. https://myanimelist.net/ 
++ R CODER. (n.d). *R colors [Full List, Color Converter and Color Picker]* | R CHARTS. 
