@@ -3,6 +3,7 @@ title: Final project - PSY6422
 output:
 html_document:
   pdf_document:
+    always_allow_html:
   date: "2024-03-29"
 ---
 
@@ -12,11 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## **THEMES OF THE TOP 1000 ANIME IN 2023**
 ### **Rationale**:
-Japanese animation, also known as **Anime**, has gained immense popularity over the years. As I grew up watching anime, the topic of which Genre or Theme was more interesting always sparked a debate between me and my friends. And thus, for my final project for PSY6422, I will try to visualise common recurring themes in the top 500 highly rated anime of the year 2023 on My Anime List. 
+Japanese animation, also known as **Anime**, has gained immense popularity over the years. As I grew up watching anime, the topic of which Genre or Theme was more interesting always sparked a debate between me and my friends. And thus, for my final project for PSY6422, I will try to visualise common recurring themes in the top 1000 highly rated anime of the year 2023 on My Anime List. 
 
-Action, adventure, comedy, drama, romance, fantasy, sci-fi, and many more genres are covered in anime. Anime fans' varied tastes and passions are catered to by the distinctive storytelling aspects found in each genre. Better recommendation systems can be created by having a better understanding of which genres perform better. The reason why I choose themes over genre is because one anime could have multiple themes thus making our criteria more inclusive and relatively comprehensive.
+Action, adventure, comedy, drama, romance, fantasy, sci-fi, and many more genres are covered in anime. Better recommendation systems can be created by having a better understanding of which genres perform better. The reason why I choose themes over genre is because one anime could have multiple themes thus making our criteria more inclusive and relatively comprehensive.
 
-I am using Plotly to create an interactive version of my plot as the graph as multiple columns which can be hard to follow & the reader might benefit from the interactive nature of the graph by simply hovering over the column to see its description i.e, The name of the theme and the count.
+The data will be visualised in a bar graph as it is approparite to convery the information I want to visualise (Ranking the count of themes & sources). I am using Plotly to create an interactive version of my plot as the graph as multiple columns which can be hard to follow & the reader might benefit from the interactive nature of the graph by simply hovering over the column to see its description i.e, The name of the theme and the count.
 
 #### **Questions I aim to visualise:**
 + In the top 1000 highly rated anime of 2023 which themes were common?
@@ -87,10 +88,11 @@ data <- rename(data,
             )
 ```
 
-#### **Data Wrangling:**
-```{r echo=TRUE}
+
+```{r echo=FALSE}
+
+# Data Wrangling:
 # Cleaning the data by removing the special characters from the dataset with the lapply function
-# Different codes because I keep messing up when I type them together!
 # First, to remove the Brackets
 data <- data.frame(lapply(data, function(x) gsub("^\\[|\\]$", "", x)))
 
@@ -138,7 +140,7 @@ theme_colors <- rainbow(length(unique(theme_counts$Themes)))
 
 # Creating the first graph with ggplot
 fig1 <- ggplot(theme_counts, aes(x = Themes, y = Count)) +
-    geom_bar(stat = 'identity', fill = theme_colors) +
+    geom_bar(stat = 'identity', fill = theme_colors, reorder= Themes,-Count) +
     labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 HIGHEST RATED ANIME IN 2023") +
     theme_minimal() +
     theme(
