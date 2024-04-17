@@ -1,10 +1,11 @@
 ---
-title: Final project - PSY6422
+title: "Final project - PSY6422"
 output:
-html_document:
   pdf_document:
-    always_allow_html:
+    always_allow_html: true
   date: "2024-03-29"
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -20,8 +21,8 @@ Action, adventure, comedy, drama, romance, fantasy, sci-fi, and many more genres
 The data will be visualised in a bar graph as it is approparite to convery the information I want to visualise (Ranking the count of themes & sources). I am using Plotly to create an interactive version of my plot as the graph as multiple columns which can be hard to follow & the reader might benefit from the interactive nature of the graph by simply hovering over the column to see its description i.e, The name of the theme and the count.
 
 #### **Questions I aim to visualise:**
-+ In the top 1000 highly rated anime of 2023 which themes were common?
-+ The highly rated to 1000 anime of 2023 were derived from which source?
++ The top animes had which themes?
++ The top animes were derived from which source?
 
 ```{r echo=FALSE}
 # Define the path to the image
@@ -60,8 +61,6 @@ if (!require("ggthemes")) install.packages("ggthemes") # Used to import addition
 if (!require("kableExtra")) install.packages("kableExtra") # used for creating tables in the document 
 if (!require("plotly")) install.packages("plotly")  #  used to create interactive plots
 
-library(renv) # using renv to manage libraries used for the project
-renv::restore()
 library(here)
 library(readr)
 library(tidyverse)
@@ -116,7 +115,7 @@ data$Source <- gsub("card_Game", "Card Game", data$Source, ignore.case = TRUE)
 ```
 
 
-```{r echo=TRUE}
+```{r echo=FALSE}
 # Making a dataset called df that divides Themes converted into a longer format
 # Separating them into a longer form after spliting them after a comma
 df <- separate_rows(data, Themes, sep = ",\\s*")
@@ -134,14 +133,16 @@ kable(theme_counts, format = "markdown")
 
 ### **An interactive plot of the Theme count**
 
-```{r echo=TRUE, warning=FALSE}
+```{r echo=TRUE, fig.height=7, fig.width=9, message=FALSE, warning=FALSE}
 # Assigning the rainbow theme to each unique theme in theme_count
 theme_colors <- rainbow(length(unique(theme_counts$Themes)))
+hover_text <-paste('Theme:', theme_counts$Themes, '<br>Count:' , theme_counts$Count) #setting the hover text 
 
 # Creating the first graph with ggplot
-fig1 <- ggplot(theme_counts, aes(x = Themes, y = Count)) +
-    geom_bar(stat = 'identity', fill = theme_colors, reorder= Themes,-Count) +
-    labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 HIGHEST RATED ANIME IN 2023") +
+fig1 <- ggplot(theme_counts, aes(x = reorder(Themes,-Count), y = Count, text = hover_text)) +
+    geom_bar(stat = 'identity', fill = theme_colors) +
+    labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 ANIME IN 2023", caption = "Based on MyAnimelist ratings") +
+  
     theme_minimal() +
     theme(
         plot.background = element_rect(fill = 'black'),  # To create a black background
@@ -150,17 +151,18 @@ fig1 <- ggplot(theme_counts, aes(x = Themes, y = Count)) +
         axis.line = element_line(color = '#FFFFFF'),  # axis lines colour set as White
         axis.text = element_text(color = '#EEB4B4'),  # axis text colour set as rosybrown2
         axis.title = element_text(color = 'skyblue'), # axis title colour set as skynlue
-        plot.title = element_text(color = 'skyblue', size = 14),  # Plot title colour set to blue & size was adjusted 
+        plot.title = element_text(color = 'skyblue', size = 18),  # Plot title colour set to blue & size was adjusted 
         axis.text.x = element_text(angle = 45, hjust = 1, size = 7)  # x-axis text angle was adjusted to make it more readable
     ) +
-    guides(fill = FALSE)  # Removing the legend as the name of the column and count is avaible in the interactive version
+  
+    guides(fill = FALSE)  # Removing the legend as the name of the column and count can be seen in the hover text
 
 #assigning the plot to plotly fr an interactive graph
-fig1 <- ggplotly(fig1)
+fig1 <- ggplotly(fig1, tooltip= 'text')
 fig1
 
 # Saving the figure in the figures folder
-ggsave(here('Figures', 'Themes_graph.png'), width = 15, height = 10, units = "cm", dpi = 500)
+ggsave(here('Figures', 'Themes_graph.png'))
 ```
 ```{r echo=FALSE}
 # Assigning the count of source of the anime to source_count
@@ -170,22 +172,27 @@ source_counts <- data %>%
     arrange(desc(n)) %>% # Arranging the count in descending order
     rename(Count = n) # Renaming n as count
 ```
-### **A table of the total theme count from top rated 1000 anime titles on My Anime List:**
+### **A table of the total source count from top 1000 anime titles on My Anime List:**
 ```{r echo=FALSE}
 # To show a table of source count
 kable(source_counts, format = "markdown")
 ```
 
-### **Second Graph that plots the source of the top 1000 highest rated anime of 2023**
-```{r echo=TRUE}
+### **Second Graph that plots the source of the top 1000 anime of 2023**
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Creating the second bar graph in ggplot
+
 source_colors <- rainbow(length(unique(source_counts$Source))) # Setting up rainbow themes for the graph by assigning a colour to each unique value
-fig2 <- ggplot(source_counts, aes(x =Source, y = Count)) +
+hover_text <-paste('<br>Count:' , source_counts$Count) #setting the hover text
+
+fig2 <- ggplot(source_counts, aes(x =reorder(Source,Count), y = Count, fill = Source,text= hover_text)) +
     scale_y_continuous(breaks = seq(0, max(source_counts$Count), by = 100)) + # To make the intervals on Y axis 100
-    geom_bar(stat = 'identity', fill = source_colors)+
-    labs(x = 'Source', y = 'Count', title = "Source of the top 1000 highest rated anime of 2023") +
+    geom_bar(stat= 'identity')+
+    labs(x= 'Source', y= 'Count', title = "The source of the anime") +
+    coord_flip() + # To create a horizontal chart
     theme_minimal() +
-    theme(
+    
+  theme(
         plot.background = element_rect(fill = 'black'),  # To create black background
         panel.background = element_rect(fill = 'black'), # To create a black panel background
         panel.grid.major = element_line(color = 'transparent'),  # To make major gridlines transparent
@@ -193,16 +200,17 @@ fig2 <- ggplot(source_counts, aes(x =Source, y = Count)) +
         axis.text = element_text(color = '#EEB4B4'),  # axis text colour set as rosybrown2
         axis.title = element_text(color = 'skyblue'), # axis title colour set as skyblue
         plot.title = element_text(color = 'skyblue', size = 14),  # Plot title colour set to blue & size was adjusted
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 7)  # x-axis text angle was adjusted to make it more readable
+        
     ) +
+  
     scale_fill_manual(values = source_colors) +  # setting the colours in the plot
     guides(fill = FALSE) # removing the legend because the plot is interactive and the names and count can be seen when clicked on
 
 #assigning the plot to plotly for an interactive graph
-fig2 <- ggplotly(fig2)
+fig2 <- ggplotly(fig2, tooltip = 'text')
 fig2
 # Saving the figure in the figures folder
-ggsave(here('Figures', 'Source_graph.png'), width = 15, height = 10, units = "cm", dpi = 500)
+ggsave(here('Figures', 'Source_graph.png'))
 ```
 
 #### **Insights:**
