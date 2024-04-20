@@ -7,7 +7,4 @@ I choose to visualise the themes of the top 1000 anime titles in the list to und
 After cleaning the data, I was able to create  dataset with only the Themes & Sources of the titles. I further assisgned these variables to get a count of them occuring in the dataset. 
 After getting the count, I plotted the count in a table with *Kable* package. 
 
-After that I used the count to create an interactive plot with the *Plotly* Library in ggplot. Thus, I created two plots, One that plotted The theme count of the top 1000 highest rated anime & the second that plotted the source of these anime titles.
-
-We see that the animes with the theme *School* are one of the highest rated animes of 2023, making it one of the highest
-recurring theme.Other categories like Adult Cast, Historical, Psychological, Super Power, Mythology, Military	& Isekai were also one of the highest rated themes of anime ratings of 2023. In the second graph we observe that a considerable amount of anime that were highly rated in 2023 were derived from Manga, followed by Light novels and original plots.
+After that I used the count to create an interactive plot with the *Plotly* Library in ggplot. Thus, I created two plots, One that plotted The theme count of the top 1000 highest rated anime & the second that plotted the demographics of these anime titles.
