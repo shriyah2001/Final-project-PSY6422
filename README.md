@@ -4,7 +4,7 @@ The project consists of a dataset acquired from Kaggle that has user ratings giv
 Other asepcts of the raw dataset include The original title, the english title, information on when the anime aired, finished airing, the day of airing, the broadcast time, user ID, studios, prouduction house, synopsis and so on.
 
 I choose to visualise the themes of the top 1000 anime titles in the list to understand which themes occured the most in the top rated anime titles of the year 2023. I will be also creating an addtional plot of the sources from which these top 1000 titles were derived.
-After cleaning the data, I was able to create  dataset with only the Themes & Sources of the titles. I further assisgned these variables to get a count of them occuring in the dataset. 
-After getting the count, I plotted the count in a table with *Kable* package. 
 
-After that I used the count to create an interactive plot with the *Plotly* Library in ggplot. Thus, I created two plots, One that plotted The theme count of the top 1000 highest rated anime & the second that plotted the demographics of these anime titles.
+I was able to produce a dataset containing just the titles' themes and demographics after cleaning the data. In order to determine how often these variables appeared in the dataset, I further assisgned them. 
+I used the *Kable* package to plot the count in a table after obtaining it. After that, I utilised the count to use ggplot's *Plotly* Library to make an interactive plot. As a result, I made two plots: one showing the theme count of the top 1000 anime series with the highest ratings, and the other showing the demographics of these anime releases.
+
