@@ -1,11 +1,11 @@
 ---
 title: "Final project - PSY6422"
 output:
-  pdf_document:
-    always_allow_html: true
-  date: "2024-03-29"
   html_document:
     df_print: paged
+  date: "2024-03-29"
+  pdf_document:
+    always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,9 +20,8 @@ Action, adventure, comedy, drama, romance, fantasy, sci-fi, and many more genres
 
 The data will be visualised in a bar graph as it is approparite to convery the information I want to visualise (Ranking the count of themes & sources). I am using Plotly to create an interactive version of my plot as the graph as multiple columns which can be hard to follow & the reader might benefit from the interactive nature of the graph by simply hovering over the column to see its description i.e, The name of the theme and the count.
 
-#### **Questions I aim to visualise:**
+#### **Question I aim to visualise:**
 + The top animes had which themes?
-+ The top animes were derived from which source?
 
 ```{r echo=FALSE}
 # Define the path to the image
@@ -44,15 +43,14 @@ Frequently shortened as MAL, MyAnimeList is a volunteer-run website that provide
 
 ### **What will my project include?**
 The data included 24,985 anime titles that were rated by users on My Anime List. The original dataset had a plethora of information including The original title, english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. 
-For my project, I will examine the top 1000 anime titles in the dataset to identify recurring themes. Additionally, I will also visualise if the *Source* of the anime, taking a look at if the anime was derived from a Manga *(Comic book)*, Web novel, Light novel or was an original creation and so on. Thus, I make sure only these columns are retrived from the rawdata.
+For my project, I will examine the top 1000 anime titles in the dataset to identify recurring themes. Additionally, I will also visualise if the *Demographics* of the anime, taking a look at the intened auidence for the title as it may help us understand the relevance of themes better. Thus, I make sure only these columns are retrived from the rawdata.
 
 ### **Folders in my project:**
 The /Data consists of the raw data acquired from kaggle, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
 
-```{r, include=FALSE}
+```{r message=FALSE, warning=TRUE, include=FALSE}
 
 # Loading the libraries required 
-if (!require("renv")) install.packages("renv") # used renv to update the packages as and when needed
 if (!require("here")) install.packages("here") # used to create a relative path for the data
 if (!require("readr")) install.packages("readr") # used to read data from csv file
 if (!require("tidyverse")) install.packages("tidyverse") # used for visualising
@@ -73,7 +71,7 @@ library(plotly)
 ```{r, include=FALSE}
 
 # Selecting specific variables
-cols <- c('source','themes')
+cols <- c('source','themes', 'demographics')
 # Specify the file path of your dataset
 file_path <- here::here("Data/anime.csv")
 
@@ -82,8 +80,8 @@ data <- read_csv(file_path, col_select = cols,n_max = 1000)
 
 # Renaming the columns
 data <- rename(data,
-            Source= source,
             Themes= themes,
+            Demographics= demographics
             )
 ```
 
@@ -97,21 +95,6 @@ data <- data.frame(lapply(data, function(x) gsub("^\\[|\\]$", "", x)))
 
 # Second, to remove quotation marks
 data <- data.frame(lapply(data, function(x) gsub("'", "", x)))
-
-# Cleaning the names of the sources in the data
-data$Source <- gsub("manga", "Manga", data$Source)
-data$Source <- gsub("original", "Original", data$Source)
-data$Source <- gsub("visual_novel", "Visual Novel", data$Source, ignore.case = TRUE)
-data$Source <- gsub("web_Manga", "Web Manga", data$Source, ignore.case = TRUE)
-data$Source <- gsub("light_novel", "Light Novel", data$Source, ignore.case = TRUE)
-data$Source <- gsub("game", "Game", data$Source)
-data$Source <- gsub("4_koma_manga", "Yonkoma", data$Source, ignore.case = TRUE)
-data$Source <- gsub("novel", "Novel", data$Source)
-data$Source <- gsub("web_Novel", "Web Novel", data$Source, ignore.case = TRUE)
-data$Source <- gsub("other", "Other", data$Source, ignore.case = TRUE)
-data$Source <- gsub("music", "Music", data$Source, ignore.case = TRUE)
-data$Source <- gsub("card_Game", "Card Game", data$Source, ignore.case = TRUE)
-
 ```
 
 
@@ -141,7 +124,7 @@ hover_text <-paste('Theme:', theme_counts$Themes, '<br>Count:' , theme_counts$Co
 # Creating the first graph with ggplot
 fig1 <- ggplot(theme_counts, aes(x = reorder(Themes,-Count), y = Count, text = hover_text)) +
     geom_bar(stat = 'identity', fill = theme_colors) +
-    labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 ANIME IN 2023", caption = "Based on MyAnimelist ratings") +
+    labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 ANIME IN 2023", caption = 'Source:Top 1000 anime titles from 2023') +
   
     theme_minimal() +
     theme(
@@ -164,31 +147,39 @@ fig1
 # Saving the figure in the figures folder
 ggsave(here('Figures', 'Themes_graph.png'))
 ```
+### Bonus Graph:**Demographics**
+#### Anime is classified according to its demographic, or aimed audience. Typical demographics consist of:
++ Shounen: Targeted towards young boys
++ Shoujo: Targeted towards young girls 
++ Seinen: Targeted towards adult men 
++ Josei: Targeted towards adult women 
++ Kids: Targeted towards Yonger auidence
+
 ```{r echo=FALSE}
-# Assigning the count of source of the anime to source_count
-source_counts <- data %>%
-    count(Source) %>%
-    filter(Source != "") %>%  #To filter out rows with empty values
+# Assigning the count of demographics to dem_count
+data <- separate_rows(data, Demographics, sep = ",\\s*") # To separate a row that has comma in it 
+dem_counts <- data %>%
+    count(Demographics) %>% 
+    filter(Demographics != "") %>%  #To filter out rows with empty values
     arrange(desc(n)) %>% # Arranging the count in descending order
-    rename(Count = n) # Renaming n as count
-```
-### **A table of the total source count from top 1000 anime titles on My Anime List:**
-```{r echo=FALSE}
-# To show a table of source count
-kable(source_counts, format = "markdown")
+    rename(Count= n) # Renaming n as count 
 ```
 
-### **Second Graph that plots the source of the top 1000 anime of 2023**
+```{r echo=TRUE}
+kable(dem_counts, format = "markdown") 
+```
+
+###**A Graph that plots the demographics of the top 1000 anime of 2023**
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Creating the second bar graph in ggplot
 
-source_colors <- rainbow(length(unique(source_counts$Source))) # Setting up rainbow themes for the graph by assigning a colour to each unique value
-hover_text <-paste('<br>Count:' , source_counts$Count) #setting the hover text
+dem_colors <- rainbow(length(unique(dem_counts$Demographics))) # Setting up rainbow themes for the graph by assigning a colour to each unique value
+hover_text <-paste('<br>Count:' , dem_counts$Count) #setting the hover text
 
-fig2 <- ggplot(source_counts, aes(x =reorder(Source,Count), y = Count, fill = Source,text= hover_text)) +
-    scale_y_continuous(breaks = seq(0, max(source_counts$Count), by = 100)) + # To make the intervals on Y axis 100
+fig2 <- ggplot(dem_counts, aes(x =reorder(Demographics,Count), y = Count, fill = Demographics,text= hover_text)) +
+    scale_y_continuous(breaks = seq(0, max(dem_counts$Count), by = 50)) + # To make the intervals on Y axis 100
     geom_bar(stat= 'identity')+
-    labs(x= 'Source', y= 'Count', title = "The source of the anime") +
+    labs(x= 'Demographics', y= 'Count', title = 'The Demographics of the anime',caption = 'Source:Top 1000 anime titles from 2023') +
     coord_flip() + # To create a horizontal chart
     theme_minimal() +
     
@@ -203,23 +194,28 @@ fig2 <- ggplot(source_counts, aes(x =reorder(Source,Count), y = Count, fill = So
         
     ) +
   
-    scale_fill_manual(values = source_colors) +  # setting the colours in the plot
+    scale_fill_manual(values = dem_colors) +  # setting the colours in the plot
     guides(fill = FALSE) # removing the legend because the plot is interactive and the names and count can be seen when clicked on
 
 #assigning the plot to plotly for an interactive graph
 fig2 <- ggplotly(fig2, tooltip = 'text')
 fig2
 # Saving the figure in the figures folder
-ggsave(here('Figures', 'Source_graph.png'))
+ggsave(here('Figures', 'Demographics.png'))
 ```
 
 #### **Insights:**
-It is evident that the *School* theme is among the most highly regarded animes of 2023, making it one of the most popular recurring themes.Some of the top-rated themes in the 2023 anime ratings were Adult Cast, Historical, Psychological, Super Power, Mythology, Military, and Isekai. 
-In the second graph we observe that a considerable amount of anime that were highly rated in 2023 were derived from Manga, followed by Light novels and original plots.
+2023 saw a lot of successful anime releases in a variety of genres. However, a clear trend became apparent: audiences were drawn to stories set in schools. Other themes that did well were Adult Cast, Historical, Psychological, Super Power, Mythology, Military, and Isekai. 
+One prominent genre of anime was shounen, which catered to young boys. The predominance of themes like school,action and adventure, which are typically popular with this demographic, may be explained by this focus on a male audience.
+
+
+Seinen, an anime series targeted at adult men, is among the top demographics, though, indicating a more complex picture. Seinen anime often explores mature themes like psychology and complex character development, which could explain why these themes were also highly rated in 2023. This implies that when deeper themes are presented in an engaging manner, viewers—even younger ones who appreciate Shounen—may be drawn to them.
 
 #### **Closing remarks:**
 I was able to pick up a new skill at my own pace with this module. I can say have relatively become capable of using R Studio and Github over time. I also used this chance to investigate various packages and themes that might improve my project in some way. I also explored managing project environments with *renv* to ensure the required packages are installed appropraitely over different devices. 
-If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series hghly rated. I also had attempted to scrap the dataset for the cuurent year via My Anime List but was unsuccessful in doing so, therefore working on my web scraping skills would also be one of my future goals.
+
+
+If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. One of the limiations of my project can be that the  plots were based on the top 1000 titles, for a more comprehensive analysis, data of all the titles can be visualised by future projects.
 
 #### **References :**
 + Anime Dataset 2023. (2023, July 28). Kaggle. https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset 
