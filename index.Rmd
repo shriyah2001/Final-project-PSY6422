@@ -18,7 +18,8 @@ Japanese animation, also known as **Anime**, has gained immense popularity over 
 
 Action, adventure, comedy, drama, romance, fantasy, sci-fi, and many more genres are covered in anime. Better recommendation systems can be created by having a better understanding of which genres perform better. The reason why I choose themes over genre is because one anime could have multiple themes thus making our criteria more inclusive and relatively comprehensive.
 
-The data will be visualised in a bar graph as it is approparite to convery the information I want to visualise (Ranking the count of themes & sources). I am using Plotly to create an interactive version of my plot as the graph as multiple columns which can be hard to follow & the reader might benefit from the interactive nature of the graph by simply hovering over the column to see its description i.e, The name of the theme and the count.
+The data will be presented as a *bar graph*, which was selected as the visualisation method for my project because it plots the rankings of various categories well. I've made an interactive version of my plot using *Plotly* because the original had multiple columns, which made it difficult to follow. The interactive feature of the graph allows the reader to simply hover over a column to see its description, such as the theme name and count.
+
 
 #### **Question I aim to visualise:**
 + The top animes had which themes?
@@ -36,14 +37,14 @@ knitr::include_graphics(image_path)
 ### **Source of the Dataset :**
 
 The dataset was acquired from Md Kazi Sajiduddin on [kaggle](https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset).
-It was created around July 2023. Jikan Application Programming Interface (4.0.0) was used to extract the anime dataset via the My Anime list. The original dataset retrived  anime-related data, inclduing the original title, the english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. [MyAnimeList](https://myanimelist.net/). 
+It was created around July 2023. Jikan Application Programming Interface (4.0.0) was used to extract the anime dataset via the My Anime list. The original dataset retrived  anime-related data, including the original title, the english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. [MyAnimeList](https://myanimelist.net/). 
 
 ### **What is My Anime List?**
 Frequently shortened as MAL, MyAnimeList is a volunteer-run website that provides social networking and social cataloging services for fans of anime and manga. Users of the website can score and arrange anime and manga using a system similar to a list. It offers a comprehensive database on anime and manga and makes it easier to find users with similar interests.
 
 ### **What will my project include?**
 The data included 24,985 anime titles that were rated by users on My Anime List. The original dataset had a plethora of information including The original title, english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. 
-For my project, I will examine the top 1000 anime titles in the dataset to identify recurring themes. Additionally, I will also visualise if the *Demographics* of the anime, taking a look at the intened auidence for the title as it may help us understand the relevance of themes better. Thus, I make sure only these columns are retrived from the rawdata.
+For my project, I will examine the top 1000 anime titles in the dataset to identify recurring *themes*. Additionally, I will also visualise if the *Demographics* of the anime, taking a look at the intened auidence for the title as it may help us understand the relevance of themes better. Thus, I make sure only these columns are retrived from the rawdata.
 
 ### **Folders in my project:**
 The /Data consists of the raw data acquired from kaggle, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
@@ -70,13 +71,11 @@ library(plotly)
 ```
 ```{r, include=FALSE}
 
-# Selecting specific variables
-cols <- c('source','themes', 'demographics')
-# Specify the file path of your dataset
+# Selecting specific columns
+cols <- c('themes', 'demographics')
+# Specifying the file path of the dataset
 file_path <- here::here("Data/anime.csv")
-
-# Load only the first 500 rows of the specified columns
-data <- read_csv(file_path, col_select = cols,n_max = 1000)
+data <- read_csv(file_path, col_select = cols,n_max = 1000) #n_max is set to 1000 in order to retrieve the top 1000 titles
 
 # Renaming the columns
 data <- rename(data,
@@ -87,7 +86,6 @@ data <- rename(data,
 
 
 ```{r echo=FALSE}
-
 # Data Wrangling:
 # Cleaning the data by removing the special characters from the dataset with the lapply function
 # First, to remove the Brackets
@@ -104,9 +102,9 @@ data <- data.frame(lapply(data, function(x) gsub("'", "", x)))
 df <- separate_rows(data, Themes, sep = ",\\s*")
 theme_counts <- df %>%   # I further assigned it to theme_counts to get a count check of the themes in the df dataset
     count(Themes) %>%
-    filter(Themes != "") %>%  #To filter out rows with empty values
-    arrange(desc(n)) %>%  # Arranging the count into descending order
-    rename(Count = n) # Renaming the count as
+    filter(Themes != "") %>%  # to filter out rows with empty values
+    arrange(desc(n)) %>%  # Arranging n into descending order
+    rename(Count = n) # Renaming n as count
 ```
 
 ### **A table of the total theme count from top rated 1000 anime titles on My Anime List**:
@@ -116,7 +114,7 @@ kable(theme_counts, format = "markdown")
 
 ### **An interactive plot of the Theme count**
 
-```{r echo=TRUE, fig.height=7, fig.width=9, message=FALSE, warning=FALSE}
+```{r echo=TRUE, fig.height=6, fig.width=9, message=FALSE, warning=FALSE}
 # Assigning the rainbow theme to each unique theme in theme_count
 theme_colors <- rainbow(length(unique(theme_counts$Themes)))
 hover_text <-paste('Theme:', theme_counts$Themes, '<br>Count:' , theme_counts$Count) #setting the hover text 
@@ -124,7 +122,7 @@ hover_text <-paste('Theme:', theme_counts$Themes, '<br>Count:' , theme_counts$Co
 # Creating the first graph with ggplot
 fig1 <- ggplot(theme_counts, aes(x = reorder(Themes,-Count), y = Count, text = hover_text)) +
     geom_bar(stat = 'identity', fill = theme_colors) +
-    labs(x = 'Themes', y = 'Count', title = "THEMES OF THE TOP 1000 ANIME IN 2023", caption = 'Source:Top 1000 anime titles from 2023') +
+    labs(x = "Themes", y = "Count", title = "BAR GRAPH OF TOP THEMES") + # defining labels
   
     theme_minimal() +
     theme(
@@ -133,12 +131,12 @@ fig1 <- ggplot(theme_counts, aes(x = reorder(Themes,-Count), y = Count, text = h
         panel.grid.major = element_line(color = 'transparent'),  # To make major gridlines transparent
         axis.line = element_line(color = '#FFFFFF'),  # axis lines colour set as White
         axis.text = element_text(color = '#EEB4B4'),  # axis text colour set as rosybrown2
-        axis.title = element_text(color = 'skyblue'), # axis title colour set as skynlue
-        plot.title = element_text(color = 'skyblue', size = 18),  # Plot title colour set to blue & size was adjusted 
+        axis.title = element_text(color = 'skyblue'), # axis title colour set as skyblue
+        plot.title = element_text(color = 'skyblue', size = 18, hjust = 0.5),  # Plot title colour set to blue & size was adjusted 
         axis.text.x = element_text(angle = 45, hjust = 1, size = 7)  # x-axis text angle was adjusted to make it more readable
-    ) +
+        ) +
   
-    guides(fill = FALSE)  # Removing the legend as the name of the column and count can be seen in the hover text
+        guides(fill = FALSE)  # Removing the legend as the name of the column and count can be seen in the hover text
 
 #assigning the plot to plotly fr an interactive graph
 fig1 <- ggplotly(fig1, tooltip= 'text')
@@ -147,13 +145,14 @@ fig1
 # Saving the figure in the figures folder
 ggsave(here('Figures', 'Themes_graph.png'))
 ```
-### Bonus Graph:**Demographics**
-#### Anime is classified according to its demographic, or aimed audience. Typical demographics consist of:
+#### Bonus Graph: **Demographics**
+> We can better understand which themes and tropes appeal to particular audiences by using demographic data.Therefore we will take a look at that factor as well.Typical demographics consist of:
+
 + Shounen: Targeted towards young boys
 + Shoujo: Targeted towards young girls 
 + Seinen: Targeted towards adult men 
 + Josei: Targeted towards adult women 
-+ Kids: Targeted towards Yonger auidence
++ Kids: Targeted towards Younger auidence
 
 ```{r echo=FALSE}
 # Assigning the count of demographics to dem_count
@@ -169,7 +168,7 @@ dem_counts <- data %>%
 kable(dem_counts, format = "markdown") 
 ```
 
-###**A Graph that plots the demographics of the top 1000 anime of 2023**
+### **A Graph that plots the demographics of the top 1000 anime of 2023**
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Creating the second bar graph in ggplot
 
@@ -177,9 +176,9 @@ dem_colors <- rainbow(length(unique(dem_counts$Demographics))) # Setting up rain
 hover_text <-paste('<br>Count:' , dem_counts$Count) #setting the hover text
 
 fig2 <- ggplot(dem_counts, aes(x =reorder(Demographics,Count), y = Count, fill = Demographics,text= hover_text)) +
-    scale_y_continuous(breaks = seq(0, max(dem_counts$Count), by = 50)) + # To make the intervals on Y axis 100
+    scale_y_continuous(breaks = seq(0, max(dem_counts$Count), by = 50)) + # To make the intervals on Y axis 50
     geom_bar(stat= 'identity')+
-    labs(x= 'Demographics', y= 'Count', title = 'The Demographics of the anime',caption = 'Source:Top 1000 anime titles from 2023') +
+    labs(x= "Demographics", y= "Count", title= "Bar graph of demographics") + # defining labels
     coord_flip() + # To create a horizontal chart
     theme_minimal() +
     
@@ -192,7 +191,7 @@ fig2 <- ggplot(dem_counts, aes(x =reorder(Demographics,Count), y = Count, fill =
         axis.title = element_text(color = 'skyblue'), # axis title colour set as skyblue
         plot.title = element_text(color = 'skyblue', size = 14),  # Plot title colour set to blue & size was adjusted
         
-    ) +
+        ) +
   
     scale_fill_manual(values = dem_colors) +  # setting the colours in the plot
     guides(fill = FALSE) # removing the legend because the plot is interactive and the names and count can be seen when clicked on
@@ -212,7 +211,7 @@ One prominent genre of anime was shounen, which catered to young boys. The predo
 Seinen, an anime series targeted at adult men, is among the top demographics, though, indicating a more complex picture. Seinen anime often explores mature themes like psychology and complex character development, which could explain why these themes were also highly rated in 2023. This implies that when deeper themes are presented in an engaging manner, viewers—even younger ones who appreciate Shounen—may be drawn to them.
 
 #### **Closing remarks:**
-I was able to pick up a new skill at my own pace with this module. I can say have relatively become capable of using R Studio and Github over time. I also used this chance to investigate various packages and themes that might improve my project in some way. I also explored managing project environments with *renv* to ensure the required packages are installed appropraitely over different devices. 
+With this module, I was able to learn a new skill at my own pace. I can say that over time, my proficiency with R Studio and Github has improved somewhat. I also took advantage of this opportunity to research different themes and packages that could help me with my project. I also looked into using *renv* to manage project environments and make sure the necessary packages are installed correctly across various devices. 
 
 
 If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. One of the limiations of my project can be that the  plots were based on the top 1000 titles, for a more comprehensive analysis, data of all the titles can be visualised by future projects.
