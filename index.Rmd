@@ -122,7 +122,7 @@ hover_text <-paste('Theme:', theme_counts$Themes, '<br>Count:' , theme_counts$Co
 # Creating the first graph with ggplot
 fig1 <- ggplot(theme_counts, aes(x = reorder(Themes,-Count), y = Count, text = hover_text)) +
     geom_bar(stat = 'identity', fill = theme_colors) +
-    labs(x = "Themes", y = "Count", title = "BAR GRAPH OF TOP THEMES") + # defining labels
+    labs(x = "Themes", y = "Count", title = "BAR GRAPH OF THE THEMES") + # defining labels
   
     theme_minimal() +
     theme(
