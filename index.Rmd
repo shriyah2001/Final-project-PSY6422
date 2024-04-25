@@ -129,7 +129,7 @@ fig1 <-
     geom_bar(stat = 'identity', fill = theme_colors) +
     scale_y_continuous(breaks = seq(0, 250, by = 50),expand =c(0,0)) + # To make the intervals on Y axis 50 and remove the gap between Y axis and 0
     ggtitle("Themes of the top rated anime of 2023") + # setting title
-    labs(x = "Themes", y = "Count") + # defining labels
+    labs(x = "Themes (of top 1000 anime titles)", y = "Count (of themes)") + # defining labels
   
     theme_minimal() +
     theme(
@@ -186,7 +186,7 @@ hover_text <-paste('<br>Count:' , dem_counts$Count) #setting the hover text
 fig2 <- 
     ggplot(dem_counts, aes(x =reorder(Demographics,Count), y = Count, fill = Demographics,text= hover_text)) +
     geom_bar(stat= 'identity')+
-    labs(x= "Demographics", y= "Count", title= "Bar graph of demographics") + # defining labels
+    labs(x= "Demographics (of top 1000 anime titles)", y= "Count", title= "Bar graph of demographics") + # defining labels
     coord_flip() + # To create a horizontal chart
     theme_minimal() +
     
