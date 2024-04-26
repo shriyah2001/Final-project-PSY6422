@@ -1,11 +1,10 @@
 ---
 title: "Final project PSY6422"
-author: '230170416'
 date: "2024-04-25"
 output:
+  pdf_document:
   html_document:
     df_print: paged
-  pdf_document:
 always_allow_html: true
 ---
 
@@ -165,7 +164,7 @@ fig1 <-
 fig1 <- ggplotly(fig1, tooltip= 'text')
 
 # Saving the figure in the figures folder
-ggsave(here::here('Figures', 'Themes_graph.png'))
+Themesgraph<-ggsave(here::here('Figures', 'Themes_graph.png'))
 ```
 
 #### Printing the graph
@@ -178,7 +177,7 @@ if (knitr::is_html_output()) {
   fig1
 } else {
 # Print the PNG image (for pdf)
-knitr::include_graphics('Figures/Themes_graph.png')
+knitr::include_graphics(Themesgraph)
 }
 ```
 
@@ -254,7 +253,7 @@ fig2 <-
 fig2 <- ggplotly(fig2, tooltip = 'text')
 
 # Saving the figure in the figures folder
-ggsave(here::here('Figures', 'Demographics.png'))
+demographicsgraph<- ggsave(here::here('Figures', 'Demographics.png'))
 ```
 
 #### Printing the graph : 
@@ -264,7 +263,7 @@ if (knitr::is_html_output()) {
   fig2
 } else {
   # Print the PNG image (for pdf)
-  knitr::include_graphics("Figures/Demographics.png")
+  knitr::include_graphics(demographicsgraph)
 }
 ```
 
