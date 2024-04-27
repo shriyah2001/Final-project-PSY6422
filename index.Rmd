@@ -2,9 +2,9 @@
 title: "Final project PSY6422"
 date: "2024-04-25"
 output:
-  pdf_document:
   html_document:
     df_print: paged
+  pdf_document:
 always_allow_html: true
 ---
 
@@ -50,7 +50,8 @@ For my project, I will examine the top 1000 anime titles in the dataset to ident
 ### **Folders in my project:**
 The /Data consists of the raw data acquired from kaggle and the codebook, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
 
-```{r message=FALSE, warning=FALSE, include=FALSE}
+### **Loading necessary packages:**
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 # Loading the libraries required 
 if (!require("renv")) install.packages("renv") # used for package management
