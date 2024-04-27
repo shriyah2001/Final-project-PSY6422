@@ -51,7 +51,7 @@ For my project, I will examine the top 1000 anime titles in the dataset to ident
 The /Data consists of the raw data acquired from kaggle and the codebook, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
 
 ### **Loading necessary packages:**
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 
 # Loading the libraries required 
 if (!require("renv")) install.packages("renv") # used for package management
