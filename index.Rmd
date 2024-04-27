@@ -2,9 +2,9 @@
 title: "Final project PSY6422"
 date: "2024-04-25"
 output:
+  pdf_document:
   html_document:
     df_print: paged
-  pdf_document:
 always_allow_html: true
 ---
 
@@ -169,7 +169,7 @@ fig1 <- ggplotly(fig1, tooltip= 'text')
 Themesgraph<-ggsave(here::here('Figures', 'Themes_graph.png'))
 ```
 
-#### Printing the graph
+### Printing the graph
 ```{r echo=TRUE, fig.align='left', fig.height=6, fig.width=9, message=FALSE, warning=FALSE}
 
 # A conditional statement is added here so an interactive graph is displayed when the document is a html page, or else as a png
@@ -184,7 +184,7 @@ knitr::include_graphics(Themesgraph)
 ```
 
 
-#### Bonus Graph: **Demographics**
+### Bonus Graph: **Demographics**
 > We can better understand which themes and tropes appeal to particular audiences by using demographic data.Therefore we will take a look at demographics as well. Typical demographics consist of:
 
 + Shounen: Targeted towards young boys
@@ -259,7 +259,7 @@ fig2 <- ggplotly(fig2, tooltip = 'text')
 demographicsgraph<- ggsave(here::here('Figures', 'Demographics.png'))
 ```
 
-#### Printing the graph : 
+### Printing the graph : 
 ```{r echo=TRUE, fig.align='left'}
 #A conditional statement is added here so an interactive graph is displayed when the document is a html page, or else as a png in pdf
 if (knitr::is_html_output()) {
@@ -271,7 +271,7 @@ if (knitr::is_html_output()) {
 ```
 
 
-#### **Insights:**
+### **Insights:**
 
 2023 saw a lot of successful anime releases in a variety of genres. However, a clear trend became apparent: audiences were drawn to stories set in schools. Other themes that did well were Adult Cast, Historical, Psychological, Super Power, Mythology, Military, and Isekai. 
 One prominent genre of anime was shounen, which catered to young boys. The predominance of themes like school,action and adventure, which are typically popular with this demographic, may be explained by this focus on a male audience.
@@ -279,7 +279,8 @@ One prominent genre of anime was shounen, which catered to young boys. The predo
 
 Seinen, an anime series targeted at adult men, is among the top demographics, though, indicating a more complex picture. Seinen anime often explores mature themes like psychology and complex character development (adult cast), which could explain why these themes were also highly rated in 2023. 
 
-#### **Closing remarks:**
+
+### **Closing remarks:**
 
 With this module, I was able to learn a new skill at my own pace. I can say that over time, my proficiency with R Studio and Github has improved somewhat. I also took advantage of this opportunity to research different themes and packages that could help me with my project. Exploring *plotly* was also one of the aspects of the project that I enjoyed, as creating interactive plots with informative tooltip assists in delivering information in a compact manner.
 I also looked into using *renv* to manage project environments and make sure the necessary packages are installed correctly across various devices. 
@@ -287,7 +288,7 @@ I also looked into using *renv* to manage project environments and make sure the
 
 If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. One of the limiations of my project can be that the  plots were based on the top 1000 titles, since I did not want to overload information in my visualisation, however, for a more comprehensive analysis, data of all the titles can be visualised by future projects.
 
-#### **References :**
+### **References :**
 + Anime Dataset 2023. (2023, July 28). Kaggle. https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset 
 + Grolemund, G., & Wickham, H. (2014). R for Data science. https://edtechbooks.org/r_data_science 
 + MyAnimeList.net: *anime and manga database and community.* (n.d.). MyAnimeList.net. https://myanimelist.net/ 
