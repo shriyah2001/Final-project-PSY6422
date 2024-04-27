@@ -2,9 +2,9 @@
 title: "Final project PSY6422"
 date: "2024-04-25"
 output:
-  pdf_document:
   html_document:
     df_print: paged
+  pdf_document:
 always_allow_html: true
 ---
 
@@ -12,7 +12,7 @@ always_allow_html: true
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### **An Exploration of Anime Trends: Themes in the Top Shows of 2023**
+## **An Exploration of Anime Trends: Themes in the Top Shows of 2023**
 #### **Rationale**:
 Japanese animation, also known as **Anime**, has gained immense popularity over the years. As I grew up watching anime, the topic of which Genre or Theme was more interesting always sparked a debate between me and my friends. And thus, for my final project for PSY6422, I will try to visualise common recurring themes in the top 1000 highly rated anime of the year 2023 on My Anime List. 
 
@@ -30,13 +30,15 @@ knitr::include_graphics(image_path)
 
 *A still from [Tenki no ko](https://myanimelist.net/anime/38826/Tenki_no_Ko) by Makato Shinkai*
 
-#### **Question I aim to visualise:**
+### **Question I aim to visualise:**
 + The top animes had which themes?
 
 ### **Source of the Dataset :**
 
 The dataset was acquired from Md Kazi Sajiduddin on [kaggle](https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset).
-It was created around July 2023. Jikan Application Programming Interface (4.0.0) was used to extract the anime dataset via the My Anime list. The original dataset retrived  anime-related data, including the original title, the english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. [MyAnimeList](https://myanimelist.net/). 
+It was created around July 2023. Jikan Application Programming Interface (4.0.0) was used to extract the anime dataset via the My Anime list. Jikan is a PHP and REST API open-source platform for the MyAnimeList database and community. It acts as a virtual connection to MyAnimeList.net through which developers can access data about manga and anime.
+
+The original dataset retrived  anime-related data, including the original title, the english title, Demographics, Start season, Airing date,Format, Studios, Synopsis, Production house, The User ID and the scores given by the users. [MyAnimeList](https://myanimelist.net/). 
 
 ### **What is My Anime List?**
 Frequently shortened as MAL, MyAnimeList is a volunteer-run website that provides social networking and social cataloging services for fans of anime and manga. Users of the website can score and arrange anime and manga using a system similar to a list. It offers a comprehensive database on anime and manga and makes it easier to find users with similar interests.
@@ -46,7 +48,7 @@ The data included 24,985 anime titles that were rated by users on My Anime List.
 For my project, I will examine the top 1000 anime titles in the dataset to identify recurring *themes*. Additionally, I will also visualise if the *Demographics* of the anime, taking a look at the intended auidence for the title as it may help us understand the relevance of themes better. Thus, I make sure only these columns are retrieved from the rawdata. Also, it is to be noted that the scores are not included in the project as the list already consists of highly rated titles with very little deviation, so including the same would be redundant. The project will instead calculate the total count and same will be included for reference.
 
 ### **Folders in my project:**
-The /Data consists of the raw data acquired from kaggle, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
+The /Data consists of the raw data acquired from kaggle and the codebook, /figures consist of the Plots generated in the project and /images consist of the image used in the project.
 
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 
@@ -206,6 +208,7 @@ dem_counts <- data %>%
     rename(Count= n) 
 ```
 
+### **A table of the demographics count from top rated 1000 anime titles on My Anime List**:
 ```{r echo=TRUE}
 kable(dem_counts, format = "markdown") 
 ```
@@ -282,7 +285,7 @@ With this module, I was able to learn a new skill at my own pace. I can say that
 I also looked into using *renv* to manage project environments and make sure the necessary packages are installed correctly across various devices. 
 
 
-If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. One of the limiations of my project can be that the  plots were based on the top 1000 titles, for a more comprehensive analysis, data of all the titles can be visualised by future projects.
+If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. One of the limiations of my project can be that the  plots were based on the top 1000 titles, since I did not want to overload information in my visualisation, however, for a more comprehensive analysis, data of all the titles can be visualised by future projects.
 
 #### **References :**
 + Anime Dataset 2023. (2023, July 28). Kaggle. https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset 
