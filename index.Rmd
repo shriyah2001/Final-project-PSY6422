@@ -53,6 +53,7 @@ The /Data consists of the raw data acquired from kaggle and the codebook, /figur
 ```{r message=FALSE, warning=FALSE, include=FALSE}
 
 # Loading the libraries required 
+if (!require("renv")) install.packages("renv") # used for package management
 if (!require("here")) install.packages("here") # used to create a relative path for the data
 if (!require("readr")) install.packages("readr") # used to read data from csv file
 if (!require("tidyverse")) install.packages("tidyverse") # used for visualising
@@ -63,6 +64,8 @@ if (!require("kableExtra")) install.packages("kableExtra") # used for creating t
 if (!require("plotly")) install.packages("plotly")  #  used to create interactive plots
 if (!require("tinytex")) install.packages("tinytex")  #  used to create pdf
 
+library(renv)
+renv::restore()
 library(here)
 library(readr)
 library(tidyverse)
