@@ -287,13 +287,13 @@ Seinen, an anime series targeted at adult men, is among the top demographics, th
 ### **Closing remarks:**
 
 With this module, I was able to learn a new skill at my own pace. I can say that over time, my proficiency with R Studio and Github has improved somewhat. I also took advantage of this opportunity to research different themes and packages that could help me with my project. Exploring *plotly* was also one of the aspects of the project that I enjoyed, as creating interactive plots with informative tooltip assists in delivering information in a compact manner.
-I also looked into using *renv* to manage project environments and make sure the necessary packages are installed correctly across various devices. 
+I also looked into using *renv* to manage project environments and to make sure the necessary packages are installed correctly across various devices. 
 
 
-If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. One of the limiations of my project can be that the  plots were based on the top 1000 titles, since I did not want to overload information in my visualisation, however, for a more comprehensive analysis, data of all the titles can be visualised by future projects.
+If I had more time to work on the project, I would have loved to plot all of the variables based on various criteria (for example, contrasting highly rated versus low rated anime titles) to have a comprehensive understanding of criteria that make an anime series highly rated. As I didn't want to overload my visualisation, one of the limitations of my project may have been that I only plotted the top 1000 titles. Nevertheless, future projects could visualise data from all the titles for a more thorough analysis.
 
 ### **References :**
-+ Anime Dataset 2023. (2023, July 28). Kaggle. https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset 
++ Anime Dataset 2023. (2023). Kaggle. https://www.kaggle.com/datasets/dbdmobile/myanimelist-dataset 
 + Grolemund, G., & Wickham, H. (2014). R for Data science. https://edtechbooks.org/r_data_science 
 + MyAnimeList.net: *anime and manga database and community.* (n.d.). MyAnimeList.net. https://myanimelist.net/ 
 + R CODER. (n.d). *R colors [Full List, Color Converter and Color Picker]* | R CHARTS. 
